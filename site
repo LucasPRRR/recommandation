@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr" xml:lang="fr"></html>
 <head>
 	<title>Titre de votre site</title>
 </head>
 <body>
-
+	<h1>Ma Page avec une image</h1>
+	<p>Voici le four solaire</p>
+	<img src="C:\Users\cpour\Desktop\Site\IMG_20230316_225339_648.jpg">
 </body>
 </html>
+
