@@ -3,8 +3,63 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Titre de la page</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
 </head>
 <body>
-    
+	<div>
+		<canvas id="pdfCanvas"></canvas>
+	</div>
+
+	<script>
+		var pdfUrl = "D:\HAND\sitehand\pdf\attestation Lucas.pdf";
+		var pdfDoc = null;
+		var pageNum = 1;
+		var pageRendering = false;
+		var pageNumPending = null;
+		var canvas = document.getElementById('pdfCanvas');
+		var ctx = canvas.getContext('2d');
+
+		function renderPage(num) {
+			pageRendering = true;
+			pdfDoc.getPage(num).then(function(page) {
+				var viewport = page.getViewport({scale: 1});
+				canvas.height = viewport.height;
+				canvas.width = viewport.width;
+
+				var renderContext = {
+					canvasContext: ctx,
+					viewport: viewport
+				};
+				var renderTask = page.render(renderContext);
+
+				renderTask.promise.then(function() {
+					pageRendering = false;
+					if (pageNumPending !== null) {
+						renderPage(pageNumPending);
+						pageNumPending = null;
+					}
+				});
+			});
+
+			document.getElementById('page_num').textContent = num;
+		}
+
+		function queueRenderPage(num) {
+			if (pageRendering) {
+				pageNumPending = num;
+			} else {
+				renderPage(num);
+			}
+		}
+
+		pdfjsLib.getDocument(pdfUrl).promise.then(function(pdfDoc_) {
+			pdfDoc = pdfDoc_;
+			document.getElementById('page_count').textContent = pdfDoc.numPages;
+
+			renderPage(pageNum);
+		});
+	</script>
 </body>
 </html>
+
+
